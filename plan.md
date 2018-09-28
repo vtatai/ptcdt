@@ -1,0 +1,9 @@
+- [DONE] Check thriftpy works
+- [DONE] Check metaprogramming to redirect calls to dispatcher
+- [IP] Parse thrift definition
+- Create dispatcher methods based on thrift definition, just logging for now
+- Update parsing so that Thrift service methods can be looked up from dispatcher
+- Convert received Thrift objects to JSON, using parsed Thrift (?)
+- Parse contract JSON
+- Match JSON
+- Convert JSON to Thrift objects (?)
