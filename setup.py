@@ -1,15 +1,18 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-config = {
-    'name': 'tpcdd',
-    'version': 1.0,
-    'description': 'Tool for Thrift contract-driven testing',
-    'author': 'Victor Tatai',
-    'packages': ['tpcdd'],
-    'entry_points': {
+setup (
+    name='tpcdd',
+    version="1.0",
+    description='Tool for Thrift contract-driven testing',
+    author='Victor Tatai',
+    license="Apache License, V.2",
+    packages=find_packages,#['tpcdd'],
+    entry_points={
         'console_scripts': ['tpcdd = tpcdd.tpcdd_cli:main']
     },
-    'install_requires': ['thriftpy'],
+    setup_requires=["pytest-runner"],
+    install_requires=['thriftpy', 'ptsd'],
+    tests_requires=['pytest>=3.8.1'],
 }
 
 setup(**config)
