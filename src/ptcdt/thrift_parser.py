@@ -13,16 +13,21 @@ class MappedAST:
         self.enums = enums if enums is not None else {}
         self.typedefs = typedefs if typedefs is not None else {}
 
-def parse(filename):
-    with open(filename) as fp:
-        tree = Parser().parse(fp.read())
+    @classmethod
+    def from_tree(cls, tree):
         logging.debug(tree.body)
-        return MappedAST(tree.namespaces, _extract_map(tree.body, ptsd.ast.Service), 
-                _extract_map(tree.body, ptsd.ast.Struct), _extract_map(tree.body, ptsd.ast.Exception_), 
-                _extract_map(tree.body, ptsd.ast.Const), _extract_map(tree.body, ptsd.ast.Enum),
-                _extract_map(tree.body, ptsd.ast.Typedef))
+        return cls(tree.namespaces, cls._extract_map(tree.body, ptsd.ast.Service), 
+                cls._extract_map(tree.body, ptsd.ast.Struct), cls._extract_map(tree.body, ptsd.ast.Exception_), 
+                cls._extract_map(tree.body, ptsd.ast.Const), cls._extract_map(tree.body, ptsd.ast.Enum),
+                cls._extract_map(tree.body, ptsd.ast.Typedef))
 
-def _extract_map(body, cl):
-    object_list = filter(lambda x: isinstance(x, cl), body)
-    return dict([(obj.name.value, obj) for obj in object_list])
+    @classmethod
+    def _extract_map(cls, body, cl):
+        object_list = filter(lambda x: isinstance(x, cl), body)
+        return dict([(obj.name.value, obj) for obj in object_list])
+
+    @classmethod
+    def from_file(cls, filename):
+        with open(filename) as fp:
+            return cls.from_tree(Parser().parse(fp.read()))
 

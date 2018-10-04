@@ -1,28 +1,8 @@
-import thriftpy
-import json
-import logging
-from thriftpy.rpc import make_server
-
-logging.basicConfig()
-
-# Server
-thrift_def = thriftpy.load("../tests/complex_param.thrift", module_name="complex_param_thrift")
-
-
-def testNest(self, *args):
-    # pass
-    json.dumps(args[0])
-
-Delegate = type('Delegate', (), dict(testNest=testNest))
-
-server = make_server(thrift_def.ThriftTest, Delegate(), '127.0.0.1', 6000)
-server.serve()
-
 import thrift_parser
 import logging
 
 def serve(filename, service_name):
-    parsed = thrift_parser.parse(filename)
+    parsed = thrift_parser.MappedAST.from_file(filename)
     service = parsed.services[service_name]
     service.functions
     
