@@ -1,7 +1,7 @@
 # from thriftpy.rpc import make_server
 
-# from ptcdt.dict_converter import DictConverter
-# from ptcdt.thrift_parser import MappedAST
+# from converter import DictConverter
+# from thrift_parser import MappedAST
 
 # import thriftpy
 # import json
@@ -12,7 +12,8 @@
 
 # # Server
 # thrift_def = thriftpy.load("../tests/thrifts/complex_param.thrift", module_name="complex_param_thrift")
-# mapped = MappedAST.from_tree(thrift_def)
+# mapped = MappedAST.from_file("../tests/thrifts/complex_param.thrift")
+# dict_converter = DictConverter(mapped.structs)
 
 # def testNest(self, *args):
     # # pass
@@ -26,6 +27,7 @@
     # print(type(args[0].byte_thing))
     # print(type(args[0].i32_thing))
     # print(type(args[0].i64_thing))
+    # print(dict_converter.to_dict("Xtruct", args[0]))
 
 
 # Delegate = type('Delegate', (), dict(testNest=testNest))

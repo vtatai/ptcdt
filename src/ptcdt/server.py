@@ -1,25 +1,59 @@
 import thrift_parser
 import logging
+import converter
 
-def serve(filename, service_name):
-    parsed = thrift_parser.MappedAST.from_file(filename)
-    service = parsed.services[service_name]
-    service.functions
-    
+# Serves the service defined inside filename, using service_name as the key, and contract
+# as a dict containing request response mappings.
+# Contract is a map from function name to another dict, this one containing the actual 
+# request responses. If contract for a function is not provided, an exception will'
+# be throw by that function if ever it is called.
+def serve(filename, service_name, contract):
+    # Loads both the AST and the thriftpy dynamically generated data
+    ast = thrift_parser.MappedAST.from_file(filename)
+    thriftpy_module = thriftpy.load(filename, module_name= service_name + "_thrift")
+
+    # Builds the delegate class which will have all the methods to handle the requests
+    # The delegate will have the methods dynamically added into them, which actually point
+    # to methods in a new instance of FunctionDelegate objects
+    Delegate = build_delegate(_ServiceExecutionContext(ast, thriftpy_module, contract, service_name))
+
+    # Builds the server and starts serving requests
+    server = make_server(getattr(thriftpy_module, service_name), Delegate(), '127.0.0.1', 6000)
+    server.serve()
+
+def build_delegate(service_execution_context):
+    return type('Delegate', (), _build_delegate_dict(service_execution_context))
+
+def _build_delegate_dict(service_execution_context):
+    functions = service_execution_context.ast_service.functions
+    # Creates a map from function name -> delegate method
+    return dict(zip(
+        map(lambda f: f.name.value, functions),
+        map(lambda f: FunctionDelegate(service_execution_context, f.name.value).delegate_function, functions)))
+
+class _ServiceExecutionContext:
+    def __init__(self, ast, thriftpy_module, service_contract, service_name):
+        self.ast = ast
+        self.thriftpy_module = thriftpy_module
+        self.service_contract = service_contract
+        self.service_name = service_name
+
+    def ast_service():
+        return self.ast.services[self.service_name]
+
 class FunctionDelegate:
-    def __init__(self, function):
-        self.function = function
+    def __init__(self, service_execution_context, function_name):
+        self.service_execution_context = service_execution_context
+        self.function_name = function_name
 
     def delegate_function(self, *args):
-        pass
-
-    def convert_to_param_map(self, *args):
-        param_names = map((lambda identifier: identifier.name.value), self.function.arguments)
-        param_names_params = zip(param_names, args)
-        param_map = reduce(self._proc_tuple, param_names_params, {})
-        logging.debug("Param map: " + str(param_map))
-        return param_map
+        # convert all params
+        converted_params = _convert_params(args)
+        # check contract
+        # convert return object
     
-    def _proc_tuple(self, acc, tupl):
-        acc[tupl[0]] = tupl[1]
-        return acc
+    def _convert_params(self, *args):
+        converter = Converter(ast.structs, thriftpy_module)
+        param_thrift_types = map(lambda field: field.type, ast.functions[function_name].arguments)
+        type_arg_tuples = zip(param_thrift_types, args)
+        return map((lambda tpl: converter.from_thrift(tpl[0], tpl[1])), type_arg_tuples)
