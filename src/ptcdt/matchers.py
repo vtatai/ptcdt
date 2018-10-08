@@ -38,12 +38,14 @@ class ParamsMatcher:
 
 class ParamsExactMatcher(ParamsMatcher):
     def __init__(self, expected_params):
+        assert isinstance(expected_params,list)
         self.expected_params = expected_params
     
     """
     param_list should be already deserialized to dicts
     """
     def match(self, param_list):
+        assert isinstance(param_list, list)
         if len(param_list) != len(self.expected_params):
             return False
         return all([tpl[0] == tpl[1] for tpl in zip(self.expected_params, param_list)])

@@ -7,7 +7,6 @@
 # import json
 # import logging
 
-
 # logging.basicConfig()
 
 # # Server
@@ -35,3 +34,21 @@
 # server = make_server(thrift_def.ThriftTest, Delegate(), '127.0.0.1', 6000)
 # server.serve()
 
+import logging
+import ptcdt.matchers
+import ptcdt.server
+from ptcdt.contracts import *
+
+logging.basicConfig()
+
+def serve():
+    # filename = utils.test_resource_path("thrifts/thrift_test.thrift")
+    filename = "../tests/thrifts/thrift_test.thrift"
+    # ast = thrift_parser.MappedAST.from_file(filename)
+    # thriftpy_module = thriftpy.load(filename, module_name= "thrift_test_thrift")
+    function_contracts = [FunctionContract([ptcdt.matchers.build_function_call_single_exact_matcher([], None)])]
+    service_contract = ServiceContract(function_contracts)
+
+    ptcdt.server.serve(filename, "SecondService", service_contract)
+
+# serve()

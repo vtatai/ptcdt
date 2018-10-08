@@ -1,3 +1,3 @@
 service Echo {
-    string echo(string msg),
+    string echo(1: string msg)
 }

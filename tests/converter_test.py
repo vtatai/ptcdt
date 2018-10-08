@@ -101,3 +101,9 @@ def test_convert_to_thrift_complex(converter, mapped_ast):
     assert obj.i32_thing == 32
     assert obj.i64_thing == 64
 
+
+def test_convert_to_string(converter, mapped_ast):
+    arg_type = mapped_ast.services["ThriftTest"].functions[1].arguments[0].type
+    obj = converter.to_thrift(arg_type, 'string_thingy')
+    assert obj == 'string_thingy'
+

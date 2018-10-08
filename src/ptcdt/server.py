@@ -1,6 +1,9 @@
-import thrift_parser
+from thriftpy.rpc import make_server
+
 import logging
-import converter
+import ptcdt.converter
+import ptcdt.thrift_parser
+import thriftpy
 
 # Serves the service defined inside filename, using service_name as the key, and contract
 # as a dict containing request response mappings.
@@ -37,23 +40,28 @@ class _ServiceExecutionContext:
         self.thriftpy_module = thriftpy_module
         self.service_contract = service_contract
         self.service_name = service_name
-
-    def ast_service():
-        return self.ast.services[self.service_name]
+        self.ast_service = ast.services[service_name]
+        self.ast_functions_map = dict(map(lambda f: (f.name.value, f), self.ast_service.functions))
 
 class FunctionDelegate:
     def __init__(self, service_execution_context, function_name):
         self.service_execution_context = service_execution_context
         self.function_name = function_name
+        self.converter = ptcdt.converter.Converter(service_execution_context.ast.structs, service_execution_context.thriftpy_module)
 
     def delegate_function(self, *args):
         # convert all params
-        converted_params = _convert_params(args)
+        converted_params = self._convert_params(list(args))
         # check contract
+        result = self.service_execution_context.service_contract.match_contract(self.function_name, converted_params)
         # convert return object
+        return self._convert_result(self.service_execution_context.ast_functions_map[self.function_name].type, result)
     
-    def _convert_params(self, *args):
-        converter = Converter(ast.structs, thriftpy_module)
-        param_thrift_types = map(lambda field: field.type, ast.functions[function_name].arguments)
-        type_arg_tuples = zip(param_thrift_types, args)
-        return map((lambda tpl: converter.from_thrift(tpl[0], tpl[1])), type_arg_tuples)
+    def _convert_params(self, args):
+        param_thrift_types = list(map(lambda field: field.type, self.service_execution_context.ast_functions_map[self.function_name].arguments))
+        type_arg_tuples = list(zip(param_thrift_types, args))
+        return list(map((lambda tpl: self.converter.from_thrift(tpl[0], tpl[1])), type_arg_tuples))
+
+    def _convert_result(self, ast_type, result):
+        return self.converter.to_thrift(ast_type, result)
+

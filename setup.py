@@ -11,8 +11,6 @@ setup (
         'console_scripts': ['tpcdd = tpcdd.tpcdd_cli:main']
     },
     setup_requires=["pytest-runner"],
-    install_requires=['thriftpy', 'ptsd'],
-    tests_requires=['pytest>=3.8.1', 'ipython'],
 )
 
 setup(**config)

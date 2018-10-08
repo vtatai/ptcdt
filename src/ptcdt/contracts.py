@@ -4,10 +4,15 @@ class ServiceContract:
     function contract
     """
     def __init__(self, function_contracts):
+        assert isinstance(function_contracts, dict)
         self.function_contracts = function_contracts
 
+    """
+    Matches the contract, returning the FunctionCallMatcher matched.
+    Throws UndefinedContractException in case no contract matches.
+    """
     def match_contract(self, function_name, call_params):
-        if not self.function_contracts.has_key(function_name):
+        if not function_name in self.function_contracts:
             raise UndefinedContractException
         return self.function_contracts[function_name].match_contract(call_params)
 
@@ -23,15 +28,15 @@ class FunctionContract:
     If no result is found, an exception is thrown.
     """
     def match_contract(self, call_params):
-        matched_fcm = None
+        matched_pmr = None
         for fcm in self.function_call_matchers:
             params_matcher_result = fcm.match(call_params) 
             if params_matcher_result != None:
-                matched_fcm = params_matcher_result
+                matched_pmr = params_matcher_result
                 break
-        if matched_fcm == None:
+        if matched_pmr == None:
             raise UndefinedContractException
-        return matched_fcm.result
+        return matched_pmr.result
 
 class UndefinedContractException(Exception):
     pass
