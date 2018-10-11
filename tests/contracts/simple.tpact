@@ -1,0 +1,34 @@
+{
+  "provider": {
+    "name": "ThriftTest"
+  },
+  "consumer": {
+    "name": "ThriftTestConsumer"
+  },
+  "interactions": [
+    {
+      "providerState" : "Test struct constant returns",
+      "description": "Description",
+      "service": "ThriftTest",
+      "request": {
+          "method": "testStruct",
+          "arguments": [{
+              "string_thing": "string_thingy",
+              "byte_thing": 0,
+              "i16_thing": 16,
+              "i32_thing": 32,
+              "i64_thing": 64
+          }]
+      },
+      "response": {
+        "value": {
+            "string_thing": "string_thingy2",
+            "byte_thing": 1,
+            "i16_thing": 17,
+            "i32_thing": 33,
+            "i64_thing": 65
+        }
+      }
+    }
+  ]
+}
