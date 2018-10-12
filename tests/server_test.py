@@ -33,7 +33,7 @@ def test_delegate_struct(thriftpy_test_module, thrift_test_ast, xtruct):
             "i64_thing": xtruct.i64_thing
             }
 
-    xtruct_return = _build_xtruct(thriftpy_test_module, "foo", 1, 2, 3, 4)
+    xtruct_return = utils.build_xtruct(thriftpy_test_module, "foo", 1, 2, 3, 4)
     contract_return = {
             "string_thing": xtruct_return.string_thing, 
             "byte_thing": xtruct_return.byte_thing,
@@ -55,16 +55,8 @@ def thriftpy_test_module():
 
 @pytest.fixture
 def xtruct(thriftpy_test_module):
-    return _build_xtruct(thriftpy_test_module, "string_thingy", 0, 16, 32, 64)
+    return utils.build_xtruct(thriftpy_test_module, "string_thingy", 0, 16, 32, 64)
 
-def _build_xtruct(thriftpy_test_module, string, byte, i16, i32, i64):
-    xtruct = thriftpy_test_module.Xtruct()
-    xtruct.string_thing = string
-    xtruct.byte_thing = byte
-    xtruct.i16_thing = i16
-    xtruct.i32_thing = i32
-    xtruct.i64_thing = i64
-    return xtruct
 
 @pytest.fixture
 def thrift_test_ast():

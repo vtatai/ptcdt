@@ -1,19 +1,18 @@
 from thriftpy.rpc import make_server
 
 import logging
+import ptcdt.contracts
 import ptcdt.converter
 import ptcdt.thrift_parser
 import thriftpy
 
 # Serves the service defined inside filename, using service_name as the key, and contract
 # as a dict containing request response mappings.
-# Contract is a map from function name to another dict, this one containing the actual 
-# request responses. If contract for a function is not provided, an exception will'
-# be throw by that function if ever it is called.
-def serve(filename, service_name, contract):
+def serve(thrift_filename, service_name, contract_filename):
     # Loads both the AST and the thriftpy dynamically generated data
-    ast = thrift_parser.MappedAST.from_file(filename)
-    thriftpy_module = thriftpy.load(filename, module_name= service_name + "_thrift")
+    ast = ptcdt.thrift_parser.MappedAST.from_file(thrift_filename)
+    thriftpy_module = thriftpy.load(thrift_filename, module_name= service_name + "_thrift")
+    contract = ptcdt.contracts.parse_contract(contract_filename)
 
     # Builds the delegate class which will have all the methods to handle the requests
     # The delegate will have the methods dynamically added into them, which actually point
