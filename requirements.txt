@@ -1,4 +1,0 @@
-cython
-thriftpy2
-ptsd
-pytest

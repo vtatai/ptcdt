@@ -3,10 +3,14 @@
 - [DONE] Parse thrift definition
 - [DONE] Convert received Thrift objects to JSON, using parsed Thrift 
 - [DONE] Convert JSON to Thrift objects
-- Create dispatcher methods based on thrift definition, just logging for now
-- Standup service based only on service name
-- Update parsing so that Thrift service methods can be looked up from dispatcher
-- Parse contract JSON
-- Match JSON
+- [DONE] Create dispatcher methods based on thrift definition, just logging for now
+- [DONE] Standup service based only on service name
+- [DONE] Update parsing so that Thrift service methods can be looked up from dispatcher
+- [DONE] Parse contract JSON
+- [DONE] Match JSON
+- Proper tool configuration
 - Fix setuptools config
-- Implement matching engine for JSON
+- Include tox
+- Deploy to pypi
+- Implement Pact-semi-compliant matching engine for JSON
+- Validate contract against jsonschema

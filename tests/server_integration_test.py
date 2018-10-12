@@ -26,7 +26,6 @@ def _start_server():
     serve(utils.test_resource_path("thrifts/thrift_test.thrift"), "ThriftTest", 
             utils.test_resource_path("contracts/simple.tpact"))
 
-
 @pytest.fixture
 def thriftpy_test_module():
     filename = utils.test_resource_path("thrifts/thrift_test.thrift")
