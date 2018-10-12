@@ -8,8 +8,8 @@
 - [DONE] Update parsing so that Thrift service methods can be looked up from dispatcher
 - [DONE] Parse contract JSON
 - [DONE] Match JSON
+- [DONE] Fix setuptools config
 - Proper tool configuration
-- Fix setuptools config
 - Include tox
 - Deploy to pypi
 - Implement Pact-semi-compliant matching engine for JSON

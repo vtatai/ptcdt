@@ -23,8 +23,7 @@ def thrift_server():
 
 def _start_server():
     logging.info("Starting server for tests")
-    serve(utils.test_resource_path("thrifts/thrift_test.thrift"), "ThriftTest", 
-            utils.test_resource_path("contracts/simple.tpact"))
+    serve_config(utils.test_resource_path("configs/test-config.ini"))
 
 @pytest.fixture
 def thriftpy_test_module():

@@ -2,11 +2,12 @@ PTCDT
 -----
 This is a simple tool to enable Thrift contract/consumer-driven testing. It enables one to spin up a Thrift server which mocks replies based on a JSON contract definition.
 
-Still under heavy development. Use it at your risk. YMMV. If it doesn't work, fix it!
+Still under heavy development. Use it at your own risk. YMMV. If it doesn't work, fix it!
 
 Usage
 -----
 
+For a sample configuration check  
 
 Development
 -----------

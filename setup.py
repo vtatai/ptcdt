@@ -4,15 +4,17 @@ from setuptools import setup, find_packages
 
 install_requires = [
         "ptsd==0.1.0",
-        "thriftpy2==0.3.11"
+        "thriftpy2==0.3.11",
+        "click==7.0",
+        "configparser==3.5.0"
         ]
 
 dev_requires = [
-    "cython>=0.28.5",
-    "pytest>=3.8.2",
-    "setuptools>=40.4.3",
-    "ipython>=7.0.1",
-]
+        "cython>=0.28.5",
+        "pytest>=3.8.2",
+        "setuptools>=40.4.3",
+        "ipython>=7.0.1",
+        ]
 
 setup (
     name='ptcdt',

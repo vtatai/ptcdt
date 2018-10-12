@@ -5,10 +5,18 @@ import ptcdt.contracts
 import ptcdt.converter
 import ptcdt.thrift_parser
 import thriftpy
+import configparser
+
+def serve_config(config_file):
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    return serve(config.get('contract', 'thrift_file'), config.get('contract', 'service'), 
+            config.get('contract', 'contract_file'), 
+            config.get('server', 'host'), config.getint('server', 'port'))
 
 # Serves the service defined inside filename, using service_name as the key, and contract
 # as a dict containing request response mappings.
-def serve(thrift_filename, service_name, contract_filename):
+def serve(thrift_filename, service_name, contract_filename, host="127.0.0.1", port=6000):
     # Loads both the AST and the thriftpy dynamically generated data
     ast = ptcdt.thrift_parser.MappedAST.from_file(thrift_filename)
     thriftpy_module = thriftpy.load(thrift_filename, module_name= service_name + "_thrift")
@@ -20,7 +28,7 @@ def serve(thrift_filename, service_name, contract_filename):
     Delegate = build_delegate(_ServiceExecutionContext(ast, thriftpy_module, contract, service_name))
 
     # Builds the server and starts serving requests
-    server = make_server(getattr(thriftpy_module, service_name), Delegate(), '127.0.0.1', 6000)
+    server = make_server(getattr(thriftpy_module, service_name), Delegate(), host, port)
     server.serve()
 
 def build_delegate(service_execution_context):
