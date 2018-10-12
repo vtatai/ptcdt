@@ -1,31 +1,17 @@
 from ptcdt.contracts import *
-from ptcdt.matchers import *
+import pytest
 import utils
 
-def test_service_contract_simple_string():
-    expected_params = ["first"]
-    function_call_matcher = build_function_call_single_exact_matcher(expected_params, "result")
-    function_contract = FunctionContract([function_call_matcher])
-    service_contract = ServiceContract({"testFunction": function_contract})
-
-    assert service_contract.match_contract("testFunction", expected_params) == "result"
-
-
-def test_service_contract_simple_struct():
-    expected_params = [{"a": 1}, {"b": 2}]
-    function_call_matcher = build_function_call_single_exact_matcher(expected_params, "result")
-    function_contract = FunctionContract([function_call_matcher])
-    service_contract = ServiceContract({"testFunction": function_contract})
-
-    assert service_contract.match_contract("testFunction", expected_params) == "result"
-    
-def test_simple_contract_parsing():
+@pytest.fixture
+def simple_contract():
     filename = utils.test_resource_path("contracts/simple.tpact")
-    contract = parse_contract(filename)
-    assert contract.provider.name == "ThriftTest"
-    assert contract.consumer.name == "ThriftTestConsumer"
-    assert len(contract.interactions) == 1
-    interaction = contract.interactions[0]
+    return parse_contract(filename)
+
+def test_simple_contract_parsing(simple_contract):
+    assert simple_contract.provider.name == "ThriftTest"
+    assert simple_contract.consumer.name == "ThriftTestConsumer"
+    assert len(simple_contract.interactions) == 1
+    interaction = simple_contract.interactions[0]
     assert interaction.provider_state == "Test struct constant returns"
     assert interaction.description == "Description"
     assert interaction.service == "ThriftTest"

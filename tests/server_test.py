@@ -1,17 +1,16 @@
 from ptcdt.contracts import *
 from ptcdt.thrift_parser import *
 from ptcdt.server import *
-import ptcdt.matchers
 import ptcdt.server
 import pytest
 import thriftpy
 import utils
 
 def test_delegate_no_params(thriftpy_test_module, thrift_test_ast):
-    function_contracts = {"blahBlah": FunctionContract([ptcdt.matchers.build_function_call_single_exact_matcher([], None)])}
-    service_contract = ServiceContract(function_contracts)
+    contract = Contract(Provider("provider"), Consumer("consumer"), [
+        Interaction("provider state", "description", "SecondService", Request("blahBlah"), Response())])
 
-    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(thrift_test_ast, thriftpy_test_module, service_contract, "SecondService"))
+    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(thrift_test_ast, thriftpy_test_module, contract, "SecondService"))
     Delegate().blahBlah()
 
 def test_delegate_simple_param_return():
@@ -19,10 +18,10 @@ def test_delegate_simple_param_return():
     ast = MappedAST.from_file(filename)
     thriftpy_module = thriftpy.load(filename, module_name= "echo_thrift")
 
-    function_contracts = {"echo": FunctionContract([ptcdt.matchers.build_function_call_single_exact_matcher(["hello"], "hello")])}
-    service_contract = ServiceContract(function_contracts)
+    contract = Contract(Provider("provider"), Consumer("consumer"), [
+        Interaction("provider state", "description", "Echo", Request("echo", ["hello"]), Response("hello"))])
 
-    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(ast, thriftpy_module, service_contract, "Echo"))
+    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(ast, thriftpy_module, contract, "Echo"))
     assert Delegate().echo("hello") == "hello"
 
 def test_delegate_struct(thriftpy_test_module, thrift_test_ast, xtruct):
@@ -42,10 +41,11 @@ def test_delegate_struct(thriftpy_test_module, thrift_test_ast, xtruct):
             "i32_thing": xtruct_return.i32_thing,
             "i64_thing": xtruct_return.i64_thing
             }
-    function_contracts = {"testStruct": FunctionContract([ptcdt.matchers.build_function_call_single_exact_matcher([contract_param], contract_return)])}
-    service_contract = ServiceContract(function_contracts)
 
-    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(thrift_test_ast, thriftpy_test_module, service_contract, "ThriftTest"))
+    contract = Contract(Provider("provider"), Consumer("consumer"), [
+        Interaction("provider state", "description", "ThriftTest", Request("testStruct", [contract_param]), Response(contract_return))])
+    
+    Delegate = build_delegate(ptcdt.server._ServiceExecutionContext(thrift_test_ast, thriftpy_test_module, contract, "ThriftTest"))
     assert Delegate().testStruct(xtruct) == xtruct_return
 
 @pytest.fixture

@@ -35,30 +35,31 @@ def _build_delegate_dict(service_execution_context):
         map(lambda f: FunctionDelegate(service_execution_context, f.name.value).delegate_function, functions)))
 
 class _ServiceExecutionContext:
-    def __init__(self, ast, thriftpy_module, service_contract, service_name):
+    def __init__(self, ast, thriftpy_module, contract, service_name):
         self.ast = ast
         self.thriftpy_module = thriftpy_module
-        self.service_contract = service_contract
+        self.contract = contract
         self.service_name = service_name
         self.ast_service = ast.services[service_name]
         self.ast_functions_map = dict(map(lambda f: (f.name.value, f), self.ast_service.functions))
 
 class FunctionDelegate:
-    def __init__(self, service_execution_context, function_name):
+    def __init__(self, service_execution_context, method_name):
         self.service_execution_context = service_execution_context
-        self.function_name = function_name
+        self.method_name = method_name
         self.converter = ptcdt.converter.Converter(service_execution_context.ast.structs, service_execution_context.thriftpy_module)
 
     def delegate_function(self, *args):
         # convert all params
         converted_params = self._convert_params(list(args))
         # check contract
-        result = self.service_execution_context.service_contract.match_contract(self.function_name, converted_params)
+        result = self.service_execution_context.contract.match(self.service_execution_context.service_name,
+                self.method_name, converted_params)
         # convert return object
-        return self._convert_result(self.service_execution_context.ast_functions_map[self.function_name].type, result)
+        return self._convert_result(self.service_execution_context.ast_functions_map[self.method_name].type, result)
     
     def _convert_params(self, args):
-        param_thrift_types = list(map(lambda field: field.type, self.service_execution_context.ast_functions_map[self.function_name].arguments))
+        param_thrift_types = list(map(lambda field: field.type, self.service_execution_context.ast_functions_map[self.method_name].arguments))
         type_arg_tuples = list(zip(param_thrift_types, args))
         return list(map((lambda tpl: self.converter.from_thrift(tpl[0], tpl[1])), type_arg_tuples))
 
