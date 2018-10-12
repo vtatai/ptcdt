@@ -10,7 +10,7 @@
 - [DONE] Match JSON
 - [DONE] Fix setuptools config
 - Proper tool configuration
-- Include tox
+- Use tox
 - Deploy to pypi
 - Implement Pact-semi-compliant matching engine for JSON
 - Validate contract against jsonschema

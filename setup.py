@@ -18,7 +18,7 @@ dev_requires = [
 
 setup (
     name='ptcdt',
-    version="1.0",
+    version="0.1.0",
     description='Tool for Thrift contract-consumer-driven testing',
     keywords="thrift python testing contract consumer",
     url="https://github.com/vtatai/ptcdt/",
@@ -28,7 +28,7 @@ setup (
     packages=find_packages(),
     python_requires='>=3.2.*',
     entry_points={
-        'console_scripts': ['ptcdt = ptcdt.server.main']
+        'console_scripts': ['ptcdt=ptcdt.main:main']
     },
     install_requires=install_requires,
     tests_require=dev_requires,
