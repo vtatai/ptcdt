@@ -18,7 +18,7 @@ dev_requires = [
 
 setup (
     name='ptcdt',
-    version="0.1.0",
+    version="0.0.1",
     description='Tool for Thrift contract-consumer-driven testing',
     keywords="thrift python testing contract consumer",
     url="https://github.com/vtatai/ptcdt/",

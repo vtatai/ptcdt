@@ -9,8 +9,8 @@
 - [DONE] Parse contract JSON
 - [DONE] Match JSON
 - [DONE] Fix setuptools config
+- Deploy to pypi
 - Proper tool configuration
 - Use tox
-- Deploy to pypi
 - Implement Pact-semi-compliant matching engine for JSON
 - Validate contract against jsonschema
