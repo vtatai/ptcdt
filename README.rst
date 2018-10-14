@@ -9,11 +9,15 @@ Usage
 =====
 
 Use pip:
+
 .. code:: bash
+
     pip install ptcdt
 
 then:
+
 .. code:: bash
+
     ptcdt <CONFIG FILE>
 
 The config file should have everything the server needs to run. For sample configurations check https://github.com/vtatai/ptcdt/tree/master/tests/configs
@@ -22,11 +26,15 @@ Development
 ===========
 
 Install all development deps:
+
 .. code:: bash
+
     pip install -e .[dev]
 
 To run tests just call:
+
 .. code:: bash
+
     export PYTHONTEST=src
     pytest
     pytest --pdb # Very handy
