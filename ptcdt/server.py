@@ -7,9 +7,13 @@ import ptcdt.thrift_parser
 import thriftpy
 import configparser
 
+logger = logging.getLogger(__name__)
+
 def serve_config(config_file):
     config = configparser.ConfigParser()
     config.read(config_file)
+
+    logger.info('Starting server')
     return serve(config.get('contract', 'thrift_file'), config.get('contract', 'service'), 
             config.get('contract', 'contract_file'), 
             config.get('server', 'host'), config.getint('server', 'port'))
@@ -60,8 +64,13 @@ class FunctionDelegate:
         # convert all params
         converted_params = self._convert_params(list(args))
         # check contract
-        result = self.service_execution_context.contract.match(self.service_execution_context.service_name,
-                self.method_name, converted_params)
+        try:
+            result = self.service_execution_context.contract.match(self.service_execution_context.service_name,
+                    self.method_name, converted_params)
+        except ptcdt.contracts.UndefinedContractException as e:
+            logger.info(f"Unmatched contract {e.args}")
+            return None
+
         # convert return object
         return self._convert_result(self.service_execution_context.ast_functions_map[self.method_name].type, result)
     

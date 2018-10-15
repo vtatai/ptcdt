@@ -1,6 +1,5 @@
 from ptsd.parser import Parser
 import ptsd
-import logging
 
 class MappedAST:
     def __init__(self, namespaces=None, services=None, structs=None, exceptions=None, consts=None, enums=None, 
@@ -15,7 +14,6 @@ class MappedAST:
 
     @classmethod
     def from_tree(cls, tree):
-        logging.debug(tree.body)
         return cls(tree.namespaces, cls._extract_map(tree.body, ptsd.ast.Service), 
                 cls._extract_map(tree.body, ptsd.ast.Struct), cls._extract_map(tree.body, ptsd.ast.Exception_), 
                 cls._extract_map(tree.body, ptsd.ast.Const), cls._extract_map(tree.body, ptsd.ast.Enum),

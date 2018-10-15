@@ -1,4 +1,7 @@
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def parse_contract(filename):
     with open(filename) as f:
@@ -68,6 +71,7 @@ class Interaction:
         if self.service != service:
             return None
         if self.request.match(method, call_params):
+            logger.info(f"Matched interaction {self.description} to params {call_params}.")
             return self.response
         return None
 
