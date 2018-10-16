@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 
 
 install_requires = [
+        "jsonschema==2.6.0",
         "ptsd==0.1.0",
         "thriftpy2==0.3.11",
         "click==7.0",
@@ -15,6 +16,12 @@ dev_requires = [
         "setuptools>=40.4.3",
         "ipython>=7.0.1",
         ]
+
+# read README file, used by Pypi
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup (
     name='ptcdt',
@@ -35,4 +42,6 @@ setup (
     extras_require={
         "dev": dev_requires,
         },
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
 )
