@@ -1,5 +1,8 @@
+from enum import Enum, unique
 from thriftpy.transport.framed import TFramedTransportFactory
+from thriftpy.transport.buffered import TBufferedTransportFactory
 from thriftpy.protocol.binary import TBinaryProtocolFactory
+from thriftpy.protocol.compact import TCompactProtocolFactory
 from thriftpy.rpc import make_server
 
 import logging
@@ -11,18 +14,33 @@ import configparser
 
 logger = logging.getLogger(__name__)
 
+@unique
+class Protocol(Enum):
+    binary = 1
+    compact = 2
+
+@unique
+class Transport(Enum):
+    buffered = 1
+    framed = 2
+
 def serve_config(config_file):
     config = configparser.ConfigParser()
     config.read(config_file)
 
+    protocol = Protocol[config.get('server', 'protocol', fallback='binary')]
+    transport = Transport[config.get('server', 'transport', fallback='framed')]
+
     logger.info('Starting server')
     return serve(config.get('contract', 'thrift_file'), config.get('contract', 'service'), 
             config.get('contract', 'contract_file'), 
-            config.get('server', 'host'), config.getint('server', 'port'))
+            config.get('server', 'host'), config.getint('server', 'port'), protocol, transport)
 
 # Serves the service defined inside filename, using service_name as the key, and contract
 # as a dict containing request response mappings.
-def serve(thrift_filename, service_name, contract_filename, host="127.0.0.1", port=6000):
+def serve(thrift_filename, service_name, contract_filename, host="127.0.0.1", port=6000, 
+        protocol=Protocol.binary,
+        transport=Transport.framed):
     # Loads both the AST and the thriftpy dynamically generated data
     ast = ptcdt.thrift_parser.MappedAST.from_file(thrift_filename)
     thriftpy_module = thriftpy.load(thrift_filename, module_name= service_name + "_thrift")
@@ -35,10 +53,27 @@ def serve(thrift_filename, service_name, contract_filename, host="127.0.0.1", po
 
     # Builds the server and starts serving requests
     server = make_server(service=getattr(thriftpy_module, service_name), handler=Delegate(),
-            host=host, port=port, proto_factory=TBinaryProtocolFactory(),
-            trans_factory=TFramedTransportFactory())
+            host=host, port=port, proto_factory=_build_protocol_factory(protocol),
+            trans_factory=_build_transport_factory(transport))
     
     server.serve()
+
+def _build_protocol_factory(protocol):
+    if protocol == Protocol.binary:
+        return TBinaryProtocolFactory()
+    elif protocol == Protocol.compact:
+        return TCompactProtocolFactory()
+    else:
+        raise Exception("Unknown protocol")
+
+def _build_transport_factory(transport):
+    if transport == Transport.framed:
+        return TFramedTransportFactory()
+    elif transport == Transport.buffered:
+        return TBufferedTransportFactory()
+    else:
+        raise Exception("Unknown transport")
+
 
 def build_delegate(service_execution_context):
     return type('Delegate', (), _build_delegate_dict(service_execution_context))

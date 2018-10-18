@@ -1,4 +1,6 @@
 from thriftpy.rpc import make_client
+from thriftpy.protocol.binary import TBinaryProtocolFactory
+from thriftpy.transport.framed import TFramedTransportFactory
 from ptcdt.server import *
 import logging
 import pytest
@@ -7,7 +9,10 @@ import time
 import utils
 
 def test(thrift_server, thriftpy_test_module, request_xtruct):
-    client = make_client(thriftpy_test_module.ThriftTest, '127.0.0.1', 6000)
+    client = make_client(thriftpy_test_module.ThriftTest, 
+            host='127.0.0.1', port=6000, 
+            proto_factory=TBinaryProtocolFactory(),
+            trans_factory=TFramedTransportFactory())
     response = client.testStruct(request_xtruct)
     assert response == utils.build_xtruct(thriftpy_test_module, "string_thingy2", 1, 17, 33, 65)
 
