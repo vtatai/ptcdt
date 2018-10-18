@@ -1,6 +1,10 @@
 =====
 PTCDT
 =====
+
+.. image:: https://travis-ci.com/vtatai/ptcdt.svg?branch=master
+    :target: https://travis-ci.com/vtatai/ptcdt
+
 PTCDT is a simple tool to enable Thrift contract/consumer-driven testing. It enables one to spin up a Thrift server which mocks replies based on a JSON contract definition.
 
 Still under heavy development. Use it at your own risk. YMMV. If it doesn't work, fix it!
