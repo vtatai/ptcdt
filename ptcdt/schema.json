@@ -1,6 +1,3 @@
-TODO NOT USED RIGHT NOW, tried using it python-jsonschema-objects with no success
-ISSUE IS WITH UNDEFINED PARTS SUCH AS REQ ARGS, RESP VALUES, WHICH WE NEED TO HANDLE ARBITRARY JSON
-SHOULD BE USED AT LEAST FOR VALIDATION
 {
     "$schema": "http://json-schema.org/draft-04/schema",
     "definitions": {

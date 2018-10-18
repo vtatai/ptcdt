@@ -1,3 +1,5 @@
+from thriftpy.transport.framed import TFramedTransportFactory
+from thriftpy.protocol.binary import TBinaryProtocolFactory
 from thriftpy.rpc import make_server
 
 import logging
@@ -32,7 +34,10 @@ def serve(thrift_filename, service_name, contract_filename, host="127.0.0.1", po
     Delegate = build_delegate(_ServiceExecutionContext(ast, thriftpy_module, contract, service_name))
 
     # Builds the server and starts serving requests
-    server = make_server(getattr(thriftpy_module, service_name), Delegate(), host, port)
+    server = make_server(service=getattr(thriftpy_module, service_name), handler=Delegate(),
+            host=host, port=port, proto_factory=TBinaryProtocolFactory(),
+            trans_factory=TFramedTransportFactory())
+    
     server.serve()
 
 def build_delegate(service_execution_context):
