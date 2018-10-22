@@ -27,7 +27,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 setup (
     name='ptcdt',
     # version='0.0.3',
-    version_format='0.0.3.dev{gitsha}',
+    version_format='0.0.3.dev{commitcount}',
     description='Tool for Thrift contract-consumer-driven testing',
     keywords="thrift python testing contract consumer",
     url="https://github.com/vtatai/ptcdt/",
