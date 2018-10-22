@@ -15,6 +15,7 @@ dev_requires = [
         "pytest>=3.8.2",
         "setuptools>=40.4.3",
         "ipython>=7.0.1",
+        "setuptools-git-version",
         ]
 
 # read README file, used by Pypi
@@ -25,7 +26,8 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 
 setup (
     name='ptcdt',
-    version="0.0.3-snapshot-1",
+    # version='0.0.3',
+    version_format='0.0.3.dev{gitsha}',
     description='Tool for Thrift contract-consumer-driven testing',
     keywords="thrift python testing contract consumer",
     url="https://github.com/vtatai/ptcdt/",
