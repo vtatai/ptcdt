@@ -54,10 +54,23 @@ class MappedAST:
         with open(filename) as fp:
             path = cls._path(fp.name)
             mapped_ast = cls.from_tree(Parser().parse(fp.read()))
-        filtered = map(lambda fname: cls.from_file(path + "/" + fname, parsed_files.append(fname)), 
+        filtered = map(lambda fname: cls._from_file_with_parsed(fname, path, parsed_files),
                 filter(lambda fname: fname not in parsed_files, 
                     map(lambda include: include.path.value, mapped_ast.includes)))
         return reduce(lambda left, right: cls.merge(left, right), filtered, mapped_ast)
+
+    @classmethod
+    def _from_file_with_parsed(cls, fname, path, parsed_files):
+        copy = parsed_files.copy()
+        copy.append(fname)
+        return cls.from_file(cls._file_path(path, fname), copy)
+
+    @classmethod
+    def _file_path(cls, path, fname):
+        if path == "":
+            return fname
+        else:
+            return path + "/" + fname
 
     @classmethod
     def _path(cls, file):
